@@ -1,28 +1,28 @@
-
-
-1. **Create a new repository:**
-   - Go to GitHub and log in to your account.
-   - Click on the "+" icon in the upper right corner and select "New repository".
-   - Enter a repository name, for example, `git-cheat-sheet`.
-   - Choose to make it public.
-   - Check the box that says "Initialize this repository with a README".
-   - Click "Create repository".
-
-2. **Edit the README file:**
-   - On the newly created repository page, click on the `README.md` file.
-   - Click on the pencil icon (edit button) to edit the file.
-
-3. **Paste the content:**
-   - Copy the cheat sheet content below:
-
-```markdown
 # Git Cheat Sheet
+
+## Table of Contents
+- [Git Cheat Sheet](#git-cheat-sheet)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+  - [Starting a Project](#starting-a-project)
+  - [Adding Code to a New Repository](#adding-code-to-a-new-repository)
+  - [Basic Snapshotting](#basic-snapshotting)
+  - [Branching and Merging](#branching-and-merging)
+  - [Remote Repositories](#remote-repositories)
+  - [Inspecting and Comparing](#inspecting-and-comparing)
+  - [Undoing Changes](#undoing-changes)
+  - [Working with Tags](#working-with-tags)
+  - [Advanced Commands](#advanced-commands)
+  - [Collaboration](#collaboration)
+  - [Cleaning Up](#cleaning-up)
+  - [Summary Commands](#summary-commands)
 
 ## Setup
 - **Configure user information for all repositories:**
   ```bash
   git config --global user.name "Your Name"
   git config --global user.email "your_email@example.com"
+
   ```
 
 ## Starting a Project
