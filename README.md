@@ -1,238 +1,338 @@
 # Git Cheat Sheet
 
-## Table of Contents
-- [Git Cheat Sheet](#git-cheat-sheet)
-  - [Table of Contents](#table-of-contents)
-  - [Setup](#setup)
-  - [Starting a Project](#starting-a-project)
-  - [Adding Code to a New Repository](#adding-code-to-a-new-repository)
-  - [Basic Snapshotting](#basic-snapshotting)
-  - [Branching and Merging](#branching-and-merging)
-  - [Remote Repositories](#remote-repositories)
-  - [Inspecting and Comparing](#inspecting-and-comparing)
-  - [Undoing Changes](#undoing-changes)
-  - [Working with Tags](#working-with-tags)
-  - [Advanced Commands](#advanced-commands)
-  - [Collaboration](#collaboration)
-  - [Cleaning Up](#cleaning-up)
-  - [Summary Commands](#summary-commands)
+A practical Git reference for everyday local work, branching, remote syncing, and safe undo workflows.
+
+## Contents
+- Setup
+- SSH Setup
+- Start a Repository
+- Daily Workflow
+- Branching
+- Remotes
+- Inspecting History
+- Undoing Changes
+- Tags and Releases
+- Collaboration
+- Cleanup
+- Quick Reference
 
 ## Setup
-- **Configure user information for all repositories:**
-  ```bash
-  git config --global user.name "Your Name"
-  git config --global user.email "your_email@example.com"
+Configure your identity once per machine:
 
-  ```
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+git config --global init.defaultBranch main
+```
 
-## Starting a Project
-- **Initialize a new Git repository:**
-  ```bash
-  git init
-  ```
-- **Clone an existing repository:**
-  ```bash
-  git clone <repository_url>
-  ```
-- **Create a new repository on GitHub:**
-  1. Go to GitHub and log in to your account.
-  2. Click on the "+" icon in the upper right corner and select "New repository".
-  3. Enter the repository name and description.
-  4. Choose to make it public or private.
-  5. Click "Create repository".
+Useful quality-of-life settings:
 
-## Adding Code to a New Repository
-1. **Initialize the repository:**
-   ```bash
-   git init
-   ```
-2. **Add the remote repository:**
-   ```bash
-   git remote add origin <repository_url>
-   ```
-3. **Add files to the staging area:**
-   ```bash
-   git add <file>
-   git add .  # Add all files
-   ```
-4. **Commit the files:**
-   ```bash
-   git commit -m "Initial commit"
-   ```
-5. **Push the changes to the remote repository:**
-   ```bash
-   git push -u origin main
-   ```
+```bash
+git config --global pull.rebase false
+git config --global fetch.prune true
+git config --global core.autocrlf true
+```
 
-## Basic Snapshotting
-- **Check the status of your repository:**
-  ```bash
-  git status
-  ```
-- **Add files to the staging area:**
-  ```bash
-  git add <file>
-  git add .          # Add all files
-  ```
-- **Commit changes:**
-  ```bash
-  git commit -m "Commit message"
-  ```
-- **Amend the last commit:**
-  ```bash
-  git commit --amend
-  ```
+## SSH Setup
+Create an SSH key and add it to your Git hosting account.
 
-## Branching and Merging
-- **Create a new branch:**
-  ```bash
-  git branch <branch_name>
-  ```
-- **Switch to a branch:**
-  ```bash
-  git checkout <branch_name>
-  ```
-- **Create and switch to a new branch:**
-  ```bash
-  git checkout -b <branch_name>
-  ```
-- **Merge a branch into the current branch:**
-  ```bash
-  git merge <branch_name>
-  ```
-- **Delete a branch:**
-  ```bash
-  git branch -d <branch_name>
-  ```
-- **Delete a branch (force):**
-  ```bash
-  git branch -D <branch_name>
-  ```
+### Linux
+Create an SSH key:
 
-## Remote Repositories
-- **Add a remote repository:**
-  ```bash
-  git remote add origin <repository_url>
-  ```
-- **Fetch from the remote repository:**
-  ```bash
-  git fetch
-  ```
-- **Push changes to the remote repository:**
-  ```bash
-  git push origin <branch_name>
-  ```
-- **Pull changes from the remote repository:**
-  ```bash
-  git pull
-  ```
-- **Set the remote branch for the current branch:**
-  ```bash
-  git branch --set-upstream-to=origin/<branch_name>
-  ```
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
 
-## Inspecting and Comparing
-- **Show commit history:**
-  ```bash
-  git log
-  ```
-- **Show commit history with diffs:**
-  ```bash
-  git log -p
-  ```
-- **Show a specific commit:**
-  ```bash
-  git show <commit_hash>
-  ```
-- **Compare branches:**
-  ```bash
-  git diff <branch_name>
-  ```
-- **Compare staged changes:**
-  ```bash
-  git diff --staged
-  ```
+Start the SSH agent and add your key:
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+Copy your public key and add it to GitHub, GitLab, or Bitbucket:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+Test the connection:
+
+```bash
+ssh -T git@github.com
+```
+
+### Windows
+Open PowerShell and create an SSH key:
+
+```powershell
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+Start the SSH agent and add your key:
+
+```powershell
+Start-Service ssh-agent
+ssh-add $env:USERPROFILE\.ssh\id_ed25519
+```
+
+Copy your public key and add it to GitHub, GitLab, or Bitbucket:
+
+```powershell
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
+```
+
+Test the connection:
+
+```powershell
+ssh -T git@github.com
+```
+
+Use the SSH remote format when cloning or updating a remote on either system:
+
+```bash
+git clone git@github.com:owner/repository.git
+git remote set-url origin git@github.com:owner/repository.git
+```
+
+## Start a Repository
+Create a new repo or clone an existing one:
+
+```bash
+git init
+git clone <repository_url>
+```
+
+Add the first remote and push:
+
+```bash
+git remote add origin <repository_url>
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+## Daily Workflow
+Check what changed:
+
+```bash
+git status
+git status -sb
+```
+
+Stage and commit:
+
+```bash
+git add <file>
+git add .
+git commit -m "Describe the change"
+```
+
+Amend the latest commit when you only need a small correction:
+
+```bash
+git commit --amend
+```
+
+## Branching
+Create and switch branches with the modern commands:
+
+```bash
+git branch <branch_name>
+git switch <branch_name>
+git switch -c <branch_name>
+```
+
+Merge a branch into the current branch:
+
+```bash
+git merge <branch_name>
+```
+
+Delete a branch after it is merged:
+
+```bash
+git branch -d <branch_name>
+git branch -D <branch_name>
+```
+
+See local branches and their upstreams:
+
+```bash
+git branch -vv
+```
+
+## Remotes
+List remotes and inspect remote URLs:
+
+```bash
+git remote -v
+```
+
+Fetch remote updates without merging:
+
+```bash
+git fetch
+git fetch --prune
+```
+
+Push and pull:
+
+```bash
+git push origin <branch_name>
+git pull
+git push -u origin <branch_name>
+```
+
+Set or change the upstream branch:
+
+```bash
+git branch --set-upstream-to=origin/<branch_name>
+```
+
+## Inspecting History
+View recent history in a compact graph:
+
+```bash
+git log --oneline --graph --decorate --all
+```
+
+Inspect a commit or a file-level change:
+
+```bash
+git show <commit_hash>
+git log -p
+```
+
+Compare changes:
+
+```bash
+git diff
+git diff --staged
+git diff <branch_name>
+git diff <commit_a>..<commit_b>
+```
+
+Find who changed a line:
+
+```bash
+git blame <file>
+```
 
 ## Undoing Changes
-- **Unstage a file:**
-  ```bash
-  git reset <file>
-  ```
-- **Revert a commit (create a new commit that undoes changes):**
-  ```bash
-  git revert <commit_hash>
-  ```
-- **Reset to a specific commit:**
-  ```bash
-  git reset --hard <commit_hash>
-  ```
-- **Stash changes:**
-  ```bash
-  git stash
-  ```
-- **Apply stashed changes:**
-  ```bash
-  git stash apply
-  ```
-- **List stashes:**
-  ```bash
-  git stash list
-  ```
+Unstage files safely:
 
-## Working with Tags
-- **Create a tag:**
-  ```bash
-  git tag <tag_name>
-  ```
-- **Push tags to remote:**
-  ```bash
-  git push origin --tags
-  ```
-- **Delete a local tag:**
-  ```bash
-  git tag -d <tag_name>
-  ```
-- **Delete a remote tag:**
-  ```bash
-  git push origin --delete tag <tag_name>
-  ```
+```bash
+git restore --staged <file>
+```
 
-## Advanced Commands
-- **Rebase a branch:**
-  ```bash
-  git rebase <branch_name>
-  ```
-- **Interactive rebase:**
-  ```bash
-  git rebase -i <commit_hash>
-  ```
-- **Cherry-pick a commit:**
-  ```bash
-  git cherry-pick <commit_hash>
-  ```
+Discard working tree changes in a file:
+
+```bash
+git restore <file>
+```
+
+Revert a commit by creating a new commit that undoes it:
+
+```bash
+git revert <commit_hash>
+```
+
+Reset is powerful and rewrites history, so use it carefully:
+
+```bash
+git reset --soft <commit_hash>
+git reset --mixed <commit_hash>
+git reset --hard <commit_hash>
+```
+
+Recover lost work with reflog:
+
+```bash
+git reflog
+```
+
+Stash work in progress:
+
+```bash
+git stash push -m "wip"
+git stash list
+git stash pop
+git stash apply
+```
+
+## Tags and Releases
+Create and inspect tags:
+
+```bash
+git tag <tag_name>
+git tag -a <tag_name> -m "Release note"
+git show <tag_name>
+```
+
+Push or delete tags:
+
+```bash
+git push origin <tag_name>
+git push origin --tags
+git tag -d <tag_name>
+git push origin --delete <tag_name>
+```
 
 ## Collaboration
-- **Fork a repository:**
-  - Go to the repository page on GitHub/GitLab and click on the "Fork" button.
-- **Create a pull request:**
-  - Go to your forked repository, switch to the branch you want to merge, and click on the "New pull request" button.
+Track a remote branch locally:
 
-## Cleaning Up
-- **Remove untracked files:**
-  ```bash
-  git clean -f
-  ```
-- **Remove untracked files and directories:**
-  ```bash
-  git clean -fd
-  ```
+```bash
+git switch --track origin/<branch_name>
+```
 
-## Summary Commands
-- **Show the summary of changes:**
-  ```bash
-  git status
-  git diff
-  git log
-  ```
+Use rebase when you want a linear local history:
 
-This cheat sheet should cover most of the commands you'll need to manage your Git repositories effectively.
+```bash
+git pull --rebase
+git rebase <branch_name>
+git rebase -i <commit_hash>
+```
+
+Move a single commit onto your current branch:
+
+```bash
+git cherry-pick <commit_hash>
+```
+
+If you work on multiple branches at once, use worktrees:
+
+```bash
+git worktree add ../repo-feature <branch_name>
+git worktree list
+```
+
+## Cleanup
+Remove untracked files carefully:
+
+```bash
+git clean -n
+git clean -f
+git clean -fd
+```
+
+Remove stale remote tracking branches:
+
+```bash
+git remote prune origin
+```
+
+## Quick Reference
+Common one-liners:
+
+```bash
+git status -sb
+git add .
+git commit -m "Message"
+git push
+git pull
+git log --oneline --graph --decorate --all
+git reflog
+```
+
+This cheat sheet now covers the commands most people use day to day, plus safer recovery options when something goes wrong.
